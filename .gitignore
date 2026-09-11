@@ -1,0 +1,31 @@
+# Data (never commit datasets)
+data/
+!data/.gitkeep
+*.csv
+*.parquet
+_delta_log/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Env & secrets
+.env
+
+# Spark / OS
+spark-warehouse/
+metastore_db/
+derby.log
+.DS_Store
+
+# Secrets / credentials
+.kaggle/
+*token*
+*.json
+.env

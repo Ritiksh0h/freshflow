@@ -1,0 +1,11 @@
+services:
+  freshflow:
+    build: .
+    volumes:
+      - ./:/app
+      - ./data:/app/data
+    environment:
+      - PYSPARK_PYTHON=python
+    # Run e.g.: docker compose run --rm freshflow make bronze
+    stdin_open: true
+    tty: true

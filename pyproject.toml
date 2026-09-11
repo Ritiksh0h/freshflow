@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "freshflow"
+version = "0.1.0"
+description = "PySpark + Delta Lake medallion pipeline for grocery waste & replenishment"
+requires-python = ">=3.11"
+dependencies = [
+    "pyspark==3.5.1",
+    "delta-spark==3.2.0",
+    "pyyaml==6.0.2",
+    "pandas==2.2.2",
+    "streamlit==1.38.0",
+    "requests==2.32.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff==0.6.9",
+    "black==24.8.0",
+    "mypy==1.11.2",
+    "pytest==8.3.3",
+    "pre-commit==3.8.0",
+    "types-PyYAML==6.0.12.20240917",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+[tool.ruff.lint]
+# E/F pyflakes+pycodestyle, I isort, UP pyupgrade, B bugbear, SIM simplify
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+warn_redundant_casts = true
+ignore_missing_imports = true   # pyspark stubs are partial
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

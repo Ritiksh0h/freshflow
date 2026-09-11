@@ -1,0 +1,12 @@
+pyspark==3.5.1
+delta-spark==3.2.0
+pyyaml==6.0.2
+pandas==2.2.2
+streamlit==1.38.0
+requests==2.32.3
+# dev
+ruff==0.6.9
+black==24.8.0
+mypy==1.11.2
+pytest==8.3.3
+pre-commit==3.8.0

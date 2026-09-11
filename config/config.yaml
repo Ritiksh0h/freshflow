@@ -1,0 +1,16 @@
+paths:
+  raw: data/raw_sample   # cluster-8 sample from sample.py; full data: data/raw
+  bronze: data/bronze
+  silver: data/silver
+  gold: data/gold
+
+replenishment:
+  lead_time_days: 7
+  service_level_z: 1.645      # 95% service level
+  rolling_windows_days: [7, 28]
+
+seasonality:
+  payday_days: [15, -1]       # 15th and month-end (Ecuador)
+
+waste_risk:
+  days_of_supply_threshold: 5

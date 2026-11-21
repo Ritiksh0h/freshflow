@@ -15,6 +15,7 @@ from pyspark.sql import SparkSession
 # Spark workers must run the same Python as the driver (the venv's), not the system one.
 os.environ.setdefault("PYSPARK_PYTHON", sys.executable)
 
+from freshflow.silver.clean import dedupe_train
 from freshflow.silver.quality import (
     flag_extreme_unit_sales,
     flag_negative_sales,
@@ -68,3 +69,20 @@ def test_flag_orphan_item(spark: SparkSession) -> None:
     report = quality_report(flagged, ["orphan_item"])
     assert report["orphan_item"] == 1
     assert flagged.count() == facts.count()  # flag-not-drop: no rows lost or fanned out
+
+
+def test_dedupe_train_keeps_same_survivor(spark: SparkSession) -> None:
+    # Same store-item-day recorded 3 times with different ids and a conflicting value,
+    # plus one unique row. Input order is reversed in the second frame: if the survivor
+    # depended on arrival order (the old orderBy(key) bug), the two results would differ.
+    cols = ["id", "date", "store_nbr", "item_nbr", "unit_sales"]
+    rows = [
+        (12, "2017-08-01", 44, 1047679, 5.0),
+        (11, "2017-08-01", 44, 1047679, 6.0),
+        (13, "2017-08-01", 44, 1047679, 5.0),
+        (20, "2017-08-01", 45, 1036689, 7.0),
+    ]
+    for ordering in (rows, rows[::-1]):
+        deduped, n_dupes = dedupe_train(spark.createDataFrame(ordering, cols))
+        assert n_dupes == 2
+        assert {(r["id"], r["unit_sales"]) for r in deduped.collect()} == {(11, 6.0), (20, 7.0)}

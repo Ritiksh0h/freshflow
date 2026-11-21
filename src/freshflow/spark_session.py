@@ -15,6 +15,9 @@ def get_spark(app_name: str = "freshflow") -> SparkSession:
     os.environ.setdefault("PYSPARK_PYTHON", sys.executable)
     builder = (
         SparkSession.builder.appName(app_name)
+        # Default is 1g; window/join shuffles on the 9.58M-row sample OOM at that.
+        # Only takes effect if set before the JVM starts (i.e. first getOrCreate).
+        .config("spark.driver.memory", "6g")
         .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
         .config(
             "spark.sql.catalog.spark_catalog",

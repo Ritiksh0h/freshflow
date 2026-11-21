@@ -14,9 +14,14 @@ def flag_negative_sales(df: DataFrame) -> DataFrame:
     return df.withColumn("neg_unit_sales", F.col("unit_sales") < 0)
 
 
-def flag_duplicate_ids(df: DataFrame, key: str = "id") -> DataFrame:
-    """Flag duplicate rows by primary key (keeps all, marks the extras)."""
-    w = Window.partitionBy(key).orderBy(key)
+def flag_duplicate_ids(df: DataFrame, keys: tuple[str, ...] = ("id",)) -> DataFrame:
+    """Flag duplicate rows by `keys` (keeps all, marks the extras as dup_row).
+
+    Ordering by every non-key column makes the survivor deterministic across reruns:
+    copies that differ always sort the same way; fully identical copies don't matter.
+    """
+    order_cols = [c for c in df.columns if c not in keys]
+    w = Window.partitionBy(*keys).orderBy(*order_cols)
     return df.withColumn("dup_row", F.row_number().over(w) > 1)
 
 

@@ -45,7 +45,7 @@
 | waste_risk_high | perishable AND days_of_supply > threshold |
 
 ## Data-quality flags (silver)
-`neg_unit_sales` · `dup_row` (same id / same date+store+item) · `orphan_store` ·
+`neg_unit_sales` · `dup_row` (repeat date+store+item; lowest id kept, extras dropped in silver) · `orphan_store` ·
 `orphan_item` · `impossible_value`. Counts go in the data-quality report.
 
 ## Weather (optional bronze, Open-Meteo archive API)
